@@ -1276,5 +1276,16 @@ function insertVideo(url){
   </video>`;
 }
 </script>
+  <script>
+fetch("https://script.google.com/macros/s/AKfycbzxPPac7XqbZYQg82vT1Y9CEzGSeNIYnoDxK5icnE_6lY0k7lePyBFS8O3jvBhWwtTuwA/exec")
+  .then(response => response.json())
+  .then(data => {
+    console.log(data);
+    mostrarProductos(data);
+  })
+  .catch(error => {
+    console.error("Error al obtener los datos:", error);
+  });
+</script>
 </body>
 </html>
