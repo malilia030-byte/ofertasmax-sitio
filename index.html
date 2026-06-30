@@ -1287,5 +1287,62 @@ fetch("https://script.google.com/macros/s/AKfycbzxPPac7XqbZYQg82vT1Y9CEzGSeNIYno
     console.error("Error al obtener los datos:", error);
   });
 </script>
+  <section id="add-product-section" class="add-product-section">
+  <h2>Agregar nuevo producto</h2>
+
+  <form id="form-producto" class="product-form">
+    <div class="form-group">
+      <label for="titulo">Título</label>
+      <input type="text" id="titulo" placeholder="Título del producto" required>
+    </div>
+
+    <div class="form-group">
+      <label for="precio">Precio</label>
+      <input type="number" id="precio" placeholder="Precio" required>
+    </div>
+
+    <div class="form-group">
+      <label for="imagen">URL de imagen</label>
+      <input type="text" id="imagen" placeholder="https://..." required>
+    </div>
+
+    <div class="form-group">
+      <label for="link">Link del producto</label>
+      <input type="text" id="link" placeholder="https://..." required>
+    </div>
+
+    <button type="submit" class="btn-save">Guardar producto</button>
+  </form>
+  </section>
+  <script>
+const form = document.getElementById("form-producto");
+
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const data = {
+    titulo: document.getElementById("titulo").value,
+    precio: document.getElementById("precio").value,
+    imagen: document.getElementById("imagen").value,
+    link: document.getElementById("link").value
+  };
+
+  fetch("https://script.google.com/macros/s/AKfycbzxPPac7XqbZYQg82vT1Y9CEzGSeNIYnoDxK5icnE_6lY0k7lePyBFS8O3jvBhWwtTuwA/exec", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  })
+    .then(res => res.json())
+    .then(r => {
+      console.log("Guardado:", r);
+      alert("Producto guardado correctamente");
+      form.reset();
+    })
+    .catch(err => {
+      console.error("Error:", err);
+      alert("Hubo un error al guardar");
+    });
+});
+  </script>
 </body>
 </html>
