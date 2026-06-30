@@ -513,7 +513,7 @@ footer{
     <div class="admin-2col">
       <div class="admin-row">
         <label class="admin-label">📂 Categoría</label>
-        <select class="admin-sel" id="a-cat">
+        <select class="admin-sel" id="a-cat"
           <option value="tech">📱 Tecnología</option>
           <option value="hogar">🏠 Hogar</option>
           <option value="moda">👗 Moda</option>
@@ -1231,33 +1231,37 @@ function calcDisc(price,old){
   if(!p||!o||o<=p)return'';
   return`-${Math.round((1-p/o)*100)}%`;
 }
-function addProduct(){
-  const name=document.getElementById('a-name').value.trim();
-  const cat=document.getElementById('a-cat').value;
-  const badge=document.getElementById('a-badge').value;
-  const price=document.getElementById('a-price').value.trim();
-  const old=document.getElementById('a-old').value.trim();
-  const img=document.getElementById('a-img').value.trim();
-  const link=document.getElementById('a-link').value.trim();
-  if(!name||!price||!link){alert('⚠️ Completa al menos: nombre, precio y link de afiliado');return;}
-  const badgeLabels={'b-pink':'🔥 MÁS VENDIDO','b-yel':'⚡ OFERTA FLASH','b-lil':'💜 NUEVO','b-peach':'✦ TOP RATED'};
-  const newProd={
-    id:Date.now(),name,cat,subcat:'general',
-    badge,label:badgeLabels[badge]||'✦ OFERTA',
-    img:img||'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=400&q=80&auto=format&fit=crop',
-    stars:5,rev:'nuevo',
-    price:parseFloat(price.replace('$','')),
-    priceStr:price.startsWith('$')?price:`$${price}`,
-    old:old||'',disc:calcDisc(price,old),link
+function addProduct() {
+  const data = {
+    titulo: document.getElementById("a-name").value,
+    categoria: document.getElementById("a-cat").value,
+    badge: document.getElementById("a-badge").value,
+    precio_oferta: document.getElementById("a-price").value,
+    precio_original: document.getElementById("a-old").value,
+    imagen: document.getElementById("a-img").value,
+    link: document.getElementById("a-link").value
   };
-  PRODUCTS.unshift(newProd);
-  buildCarousel();
-  // limpiar
-  ['a-name','a-price','a-old','a-img','a-link'].forEach(id=>document.getElementById(id).value='');
-  const ok=document.getElementById('adminSuccess');
-  ok.classList.add('show');
-  setTimeout(()=>ok.classList.remove('show'),3000);
-}
+
+  fetch("https://script.google.com/macros/s/AKfycbzxPPac7XqbZYQg82vT1Y9CEzGSeNIYnoDxK5icnE_6lY0k7lePyBFS8O3jvBhWwtTuwA/exec", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  })
+    .then(res => res.json())
+    .then(r => {
+      const ok = document.getElementById("adminSuccess");
+      ok.classList.add("show");
+      setTimeout(() => ok.classList.remove("show"), 2000);
+
+      // limpiar campos
+      ["a-name","a-cat","a-badge","a-price","a-old","a-img","a-link"]
+        .forEach(id => document.getElementById(id).value = "");
+    })
+    .catch(err => {
+      alert("Hubo un error al guardar");
+      console.error(err);
+    });
+                                  
 
 /* ═══════════════ SCROLL / INIT ═══════════════ */
 window.addEventListener('scroll',()=>{
@@ -1286,63 +1290,6 @@ fetch("https://script.google.com/macros/s/AKfycbzxPPac7XqbZYQg82vT1Y9CEzGSeNIYno
   .catch(error => {
     console.error("Error al obtener los datos:", error);
   });
-</script>
-  <section id="add-product-section" class="add-product-section">
-  <h2>Agregar nuevo producto</h2>
-
-  <form id="form-producto" class="product-form">
-    <div class="form-group">
-      <label for="titulo">Título</label>
-      <input type="text" id="titulo" placeholder="Título del producto" required>
-    </div>
-
-    <div class="form-group">
-      <label for="precio">Precio</label>
-      <input type="number" id="precio" placeholder="Precio" required>
-    </div>
-
-    <div class="form-group">
-      <label for="imagen">URL de imagen</label>
-      <input type="text" id="imagen" placeholder="https://..." required>
-    </div>
-
-    <div class="form-group">
-      <label for="link">Link del producto</label>
-      <input type="text" id="link" placeholder="https://..." required>
-    </div>
-
-    <button type="submit" class="btn-save">Guardar producto</button>
-  </form>
-  </section>
-  <script>
-const form = document.getElementById("form-producto");
-
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
-
-  const data = {
-    titulo: document.getElementById("titulo").value,
-    precio: document.getElementById("precio").value,
-    imagen: document.getElementById("imagen").value,
-    link: document.getElementById("link").value
-  };
-
-  fetch("https://script.google.com/macros/s/AKfycbzxPPac7XqbZYQg82vT1Y9CEzGSeNIYnoDxK5icnE_6lY0k7lePyBFS8O3jvBhWwtTuwA/exec", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  })
-    .then(res => res.json())
-    .then(r => {
-      console.log("Guardado:", r);
-      alert("Producto guardado correctamente");
-      form.reset();
-    })
-    .catch(err => {
-      console.error("Error:", err);
-      alert("Hubo un error al guardar");
-    });
-});
   </script>
 </body>
 </html>
