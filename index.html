@@ -513,7 +513,7 @@ footer{
     <div class="admin-2col">
       <div class="admin-row">
         <label class="admin-label">📂 Categoría</label>
-        <select class="admin-sel" id="a-cat"
+        <select class="admin-sel" id="a-cat">
           <option value="tech">📱 Tecnología</option>
           <option value="hogar">🏠 Hogar</option>
           <option value="moda">👗 Moda</option>
@@ -562,7 +562,7 @@ footer{
 
 <!-- ══════ HEADER ══════ -->
 <header>
-  <div class="font-size"> *** Mis Favoritos de Amazon *** </div>
+  <div class="logo">*** Mis Favoritos de Amazon ***</div>
   <div class="breadcrumb" id="breadcrumb">
     <span onclick="goHome()" class="active">🏠 Inicio</span>
   </div>
@@ -612,8 +612,6 @@ footer{
   <div class="video-section">
     <div class="video-wrap" id="videoWrap">
       <div class="video-badge">🎬 Ofertas del Momento</div>
-      <!-- El video se insertará aquí automáticamente cuando esté listo -->
-      <!-- Por ahora mostramos un placeholder elegante -->
       <video autoplay muted loop playsinline controls style="width:100%;display:block;max-height:480px;object-fit:cover;">
         <source src="cinematic_promotional_video_for_an_onlin_mqlhuupk.mp4" type="video/mp4">
       </video>
@@ -709,7 +707,6 @@ footer{
     <div class="carousel-track-wrap" id="carWrap">
       <div class="carousel-track" id="carTrack"></div>
     </div>
-    <!-- Touch swipe -->
   </div>
 
   <!-- CATEGORÍAS -->
@@ -921,7 +918,6 @@ function buildCarousel(){
     </div>
   `).join('');
   buildDots();
-  // Swipe touch
   const wrap=document.getElementById('carWrap');
   let tx=0;
   wrap.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;},{passive:true});
@@ -977,7 +973,6 @@ function updateRange(){
   const fill=document.getElementById('rangeFill');
   fill.style.left=pct(mn)+'%';
   fill.style.width=(pct(mx)-pct(mn))+'%';
-  // reset brackets
   document.querySelectorAll('.pb').forEach(b=>b.classList.remove('on'));
   applyAllFilters();
 }
@@ -1019,7 +1014,7 @@ function clearSearch(){
   setPriceRange(document.querySelector('.pb'),0,9999);
 }
 
-/* ═══════════════ BÚSQUEDA LIVE ═══════════════ */
+/* ════════════════ BÚSQUEDA LIVE ═══════════════ */
 function liveSearch(val){
   const lr=document.getElementById('liveResults');
   if(val.length<2){lr.style.display='none';applyAllFilters();return;}
@@ -1067,9 +1062,9 @@ document.addEventListener('DOMContentLoaded',()=>{
       document.getElementById('liveResults').style.display='none';
     }
   });
-  // Init range fill
   const fill=document.getElementById('rangeFill');
   if(fill){fill.style.left='0%';fill.style.width='100%';}
+  buildCarousel();
 });
 function showSearchResults(results,q){
   currentCat=null;
@@ -1101,7 +1096,6 @@ function goCategory(catId){
   document.getElementById('sub-pill').textContent=cat.name;
   document.getElementById('sub-title').textContent=cat.name;
   document.getElementById('sub-desc').textContent=cat.desc;
-  // actualizar contador de subcats
   const grid=document.getElementById('subcat-grid');
   grid.innerHTML=cat.subcats.map(s=>{
     const qty=PRODUCTS.filter(p=>p.cat===catId&&p.subcat===s.id).length;
@@ -1221,7 +1215,7 @@ function updateBreadcrumb(items){
   }).join('');
 }
 
-/* ═══════════════ ADMIN PANEL ═══════════════ */
+/* ════════════════ ADMIN PANEL ═══════════════ */
 function toggleAdmin(){
   document.getElementById('adminPanel').classList.toggle('open');
 }
@@ -1253,7 +1247,6 @@ function addProduct() {
       ok.classList.add("show");
       setTimeout(() => ok.classList.remove("show"), 2000);
 
-      // limpiar campos
       ["a-name","a-cat","a-badge","a-price","a-old","a-img","a-link"]
         .forEach(id => document.getElementById(id).value = "");
     })
@@ -1261,26 +1254,45 @@ function addProduct() {
       alert("Hubo un error al guardar");
       console.error(err);
     });
-                                  
+}
 
 /* ═══════════════ SCROLL / INIT ═══════════════ */
 window.addEventListener('scroll',()=>{
   document.getElementById('st').classList.toggle('show',window.scrollY>300);
 });
-buildCarousel();
 
 /* ═══════════════ VIDEO (se insertará cuando esté listo) ═══════════════ */
-// Reemplaza la siguiente línea con la URL de tu video cuando esté listo:
-// insertVideo('URL_DEL_VIDEO.mp4');
 function insertVideo(url){
-  const wrap=document.getElementById('videoPlaceholder');
+  const wrap=document.getElementById('videoWrap');
   if(!wrap)return;
-  wrap.outerHTML=`<video autoplay muted loop playsinline controls style="width:100%;display:block;max-height:480px;object-fit:cover;">
-    <source src="${url}" type="video/mp4">
-  </video>`;
+  wrap.innerHTML=`<div class="video-badge">🎬 Ofertas del Momento</div>
+    <video autoplay muted loop playsinline controls style="width:100%;display:block;max-height:480px;object-fit:cover;">
+      <source src="${url}" type="video/mp4">
+    </video>`;
 }
-</script>
-  <script>
+
+/* ═══════════════ CARGA DESDE GOOGLE APPS SCRIPT ═══════════════ */
+function mostrarProductos(data){
+  if(!Array.isArray(data))return;
+  PRODUCTS = data.map((d,i)=>({
+    id: i+1,
+    name: d.titulo || 'Producto sin título',
+    cat: d.categoria || 'tech',
+    subcat: d.subcat || 'auriculares',
+    badge: d.badge || 'b-pink',
+    label: d.label || '🔥 MÁS VENDIDO',
+    img: d.imagen || 'https://via.placeholder.com/400x300',
+    stars: 5,
+    rev: d.reviews || '1,000',
+    price: parseFloat((d.precio_oferta||'0').toString().replace('$','')) || 0,
+    priceStr: d.precio_oferta || '$0.00',
+    old: d.precio_original || '$0.00',
+    disc: calcDisc(d.precio_oferta||'$0',d.precio_original||'$0'),
+    link: d.link || '#'
+  }));
+  buildCarousel();
+}
+
 fetch("https://script.google.com/macros/s/AKfycbzxPPac7XqbZYQg82vT1Y9CEzGSeNIYnoDxK5icnE_6lY0k7lePyBFS8O3jvBhWwtTuwA/exec")
   .then(response => response.json())
   .then(data => {
@@ -1290,6 +1302,6 @@ fetch("https://script.google.com/macros/s/AKfycbzxPPac7XqbZYQg82vT1Y9CEzGSeNIYno
   .catch(error => {
     console.error("Error al obtener los datos:", error);
   });
-  </script>
+</script>
 </body>
-</html>
+  </html>
