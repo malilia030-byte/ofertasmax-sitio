@@ -1302,5 +1302,20 @@ fetch("https://script.google.com/macros/s/AKfycbY6Vp9Y9_KVN-4AcPrg-UhYnjKucu-f3l
     console.error("Error al obtener los datos:", error);
   });
 </script>
+  window.onerror = function(msg, url, line) {
+  const div = document.createElement("div");
+  div.style.position = "fixed";
+  div.style.bottom = "0";
+  div.style.left = "0";
+  div.style.width = "100%";
+  div.style.background = "black";
+  div.style.color = "white";
+  div.style.padding = "10px";
+  div.style.fontSize = "14px";
+  div.style.zIndex = "999999";
+  div.innerText = "ERROR: " + msg + " | Línea: " + line;
+  document.body.appendChild(div);
+};
+</scrip>
 </body>
   </html>
