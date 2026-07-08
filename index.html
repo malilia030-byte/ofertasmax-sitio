@@ -1301,6 +1301,8 @@ fetch("https://script.google.com/macros/s/AKfycbY6Vp9Y9_KVN-4AcPrg-UhYnjKucu-f3l
   })
   .catch(error => {
     console.error("Error al obtener los datos:", error);
+    console.log("JS está vivo");
+alert("JS está funcionando");
   });
 
 window.onerror = function(msg, url, line) {
