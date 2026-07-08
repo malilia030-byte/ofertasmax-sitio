@@ -1301,9 +1301,10 @@ fetch("https://script.google.com/macros/s/AKfycbY6Vp9Y9_KVN-4AcPrg-UhYnjKucu-f3l
   })
   .catch(error => {
     console.error("Error al obtener los datos:", error);
-    console.log("JS está vivo");
-alert("JS está funcionando");
   });
+
+// PRUEBA: esto debe mostrar un alert SI el JS funciona
+alert("JS está funcionando");
 
 window.onerror = function(msg, url, line) {
   const div = document.createElement("div");
